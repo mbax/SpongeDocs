@@ -48,10 +48,14 @@ public final class ClassUtils {
      * Extract the class names from the given potentially generic class
      * reference.
      *
-     * <p> <b>Examples:</b> </p>
+     * <p>
+     * <b>Examples:</b>
+     * </p>
      *
-     * <ul> <li>String -&gt; String</li> <li>Collection&lt;String&gt; -&gt;
-     * Collection, String</li> </ul>
+     * <ul>
+     * <li>String -&gt; String</li>
+     * <li>Collection&lt;String&gt; -&gt; Collection, String</li>
+     * </ul>
      *
      * @param genericDefinition The generic class definition.
      * @return A list with all classes contained in the genericDefinition in the
