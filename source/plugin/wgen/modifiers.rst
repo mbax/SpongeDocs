@@ -64,8 +64,8 @@ Registering a WorldGeneratorModifier
 ====================================
 
 Now that you have created our modifier, you need to register it. A good time to do this is during the ``INITIALIZATION``
-State. To register it, simply call :javadoc:`GameRegistry#register(Class, T)` with ``WorldGeneratorModifier.class`` as
-the first argument and your modifier as the second.
+State. To register it, simply call :javadoc:`GameRegistry#register(Class, CatalogType)` with
+``WorldGeneratorModifier.class`` as the first argument and your modifier as the second.
 
 .. code-block:: java
 
