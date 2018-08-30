@@ -1,7 +1,7 @@
 Javadoc-Checker
 ===============
 
-A helper to check whether the docs contain only valid javadoc references.
+A helper to search for invalid javadoc references.
 
 Requirements
 ------------
@@ -12,15 +12,39 @@ Requirements
 Usage
 -----
 
-Either use a precompiled jar:
+There a three variants to run this project.
 
-````bash
-mvn clean package
-java -Dlog4j.skipJansi=false -jar target/javadock-checker....jar [path to SpongeDocs/source]
-````
+### Direct
 
-or run it directly from the command lines:
+The simplest one is just run the following command in the command line:
 
 ````bash
 mvn
 ````
+
+This uses the API version as specified in the pom and assumes it is executed from within the SpongeDocs repo.
+
+You can also pass command line arguments to this like:
+
+````bash
+mvn -Dexec.args=[path to SpongeDocs/source]
+````
+
+### Stand-alone
+
+Or you can build the jar and then run the stand-alone variant:
+
+````bash
+mvn clean package
+java -jar javadoc-checker-x.y.z-API-a.b.c.jar [path to SpongeDocs/source]
+````
+
+### Independent
+
+Or use the independent version that can be used to check any API version:
+
+````bash
+mvn clean package
+java -cp "spongeapi-a.b.c-shaded.jar;javadoc-checker-x.y.z-independent.jar" org.spongepowered.docs.tools.javadoc.Main [path to SpongeDocs/source]
+````
+

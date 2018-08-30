@@ -48,24 +48,34 @@
 	</repositories>
 
 	<dependencies>
-
 		<dependency>
-			<groupId>org.spongepowered</groupId>
-			<artifactId>spongeapi</artifactId>
-			<version>${sponge.api.version}</version>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>21.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.findbugs</groupId>
+			<artifactId>jsr305</artifactId>
+			<version>3.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.25</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-slf4j-impl</artifactId>
 			<version>2.11.1</version>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.fusesource.jansi</groupId>
-			<artifactId>jansi</artifactId>
-			<version>1.17.1</version>
+			<groupId>org.spongepowered</groupId>
+			<artifactId>spongeapi</artifactId>
+			<version>${sponge.api.version}</version>
+			<scope>runtime</scope>
 		</dependency>
-
 	</dependencies>
 
 	<build>
@@ -95,7 +105,6 @@
 						</manifest>
 						<manifestEntries>
 							<build-timestamp>${maven.build.timestamp}</build-timestamp>
-							<sponge-api-version>${sponge.api.version}</sponge-api-version>
 						</manifestEntries>
 					</archive>
 				</configuration>
@@ -105,17 +114,57 @@
 				<artifactId>maven-shade-plugin</artifactId>
 				<version>3.1.1</version>
 				<executions>
+					<!-- Create a jar that can be run standalone -->
 					<execution>
+						<id>package-current</id>
 						<phase>package</phase>
 						<goals>
 							<goal>shade</goal>
 						</goals>
+						<configuration>
+							<shadedClassifierName>API-${sponge.api.version}</shadedClassifierName>
+							<keepDependenciesWithProvidedScope>true</keepDependenciesWithProvidedScope>
+							<transformers>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<manifestEntries>
+										<packaging-type>current</packaging-type>
+										<sponge-api-version>${sponge.api.version}</sponge-api-version>
+									</manifestEntries>
+								</transformer>
+							</transformers>
+						</configuration>
+					</execution>
+					<!-- Create a jar that can be run with a custom API jar -->
+					<execution>
+						<id>package-independent</id>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<shadedClassifierName>independent</shadedClassifierName>
+							<artifactSet>
+								<includes>
+									<include>com.google.guava:guava</include>
+									<include>org.slf4j:slf4j-api</include>
+									<include>org.apache.logging.log4j:*</include>
+								</includes>
+							</artifactSet>
+							<transformers>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<manifestEntries>
+										<packaging-type>independent</packaging-type>
+									</manifestEntries>
+								</transformer>
+							</transformers>
+						</configuration>
 					</execution>
 				</executions>
 				<configuration>
 					<createDependencyReducedPom>false</createDependencyReducedPom>
 					<shadedArtifactAttached>true</shadedArtifactAttached>
-					<shadedClassifierName>full</shadedClassifierName>
 				</configuration>
 			</plugin>
 			<plugin>

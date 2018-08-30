@@ -3,7 +3,7 @@
 	<Appenders>
 		<Console name="Console" target="SYSTEM_OUT">
 			<PatternLayout
-				pattern="[%level@%c{1}] %highlight{%msg%n%throwable}" />
+				pattern="[%level@%c{1}] %highlight{%msg%n%throwable}" disableAnsi="false" />
 		</Console>
 	</Appenders>
 	<Loggers>
