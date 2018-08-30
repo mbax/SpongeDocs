@@ -1,8 +1,5 @@
 package org.spongepowered.docs.tools.javadoc;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.IOException;
 import java.time.Instant;
@@ -10,6 +7,9 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Main {
 
@@ -31,11 +31,16 @@ public class Main {
                     docsSourceRoot = new File(".");
                 }
             }
-
         }
         if (!docsSourceRoot.exists()) {
             LOGGER.error("Docs Source not found at: ", docsSourceRoot.getAbsolutePath());
             throw new IllegalArgumentException("Docs Source not found at: " + docsSourceRoot.getAbsolutePath());
+        }
+        final boolean checkDeprecated;
+        if (args.length >= 2) {
+            checkDeprecated = Boolean.parseBoolean(args[1]);
+        } else {
+            checkDeprecated = false;
         }
 
         final File processingRoot = docsSourceRoot.getCanonicalFile();
@@ -47,7 +52,7 @@ public class Main {
         final AtomicInteger errorCount = new AtomicInteger();
 
         recursiveFileStream(processingRoot)
-                .map(file -> new FileChecker(file, pathPrefixLength))
+                .map(file -> new FileChecker(file, pathPrefixLength, checkDeprecated))
                 .forEachOrdered(checker -> {
                     fileCount.incrementAndGet();
                     try {

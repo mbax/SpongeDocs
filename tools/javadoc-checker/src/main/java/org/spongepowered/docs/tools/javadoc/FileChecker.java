@@ -4,11 +4,10 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.Files.lines;
 import static java.nio.file.Files.readAllBytes;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -19,6 +18,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FileChecker {
 
@@ -33,6 +35,7 @@ public class FileChecker {
 
     private final String fileName;
     private final File file;
+    private final boolean checkDeprecated;
     private final Map<String, Class<?>> imports = new LinkedHashMap<>(ClassUtils.PRIMITIVE_IMPORTS);
     private final Map<String, Class<?>> unusedImports = new TreeMap<>();
     private int findings = 0;
@@ -43,10 +46,13 @@ public class FileChecker {
      * @param file The file to handle in this instance.
      * @param pathPrefixLength The pathPrefix length that can be ignored for the
      *        file name.
+     * @param checkDeprecated Whether this checker should check for deprecated
+     *        references.
      */
-    public FileChecker(final File file, final int pathPrefixLength) {
+    public FileChecker(final File file, final int pathPrefixLength, boolean checkDeprecated) {
         this.fileName = file.getPath().substring(pathPrefixLength).replace('\\', '/');
         this.file = file;
+        this.checkDeprecated = checkDeprecated;
     }
 
     /**
@@ -198,7 +204,11 @@ public class FileChecker {
                 report("Missing import", classReference, reference);
             }
         }
-        return resolveClass(classReferences.get(0));
+        Class<?> clazz = resolveClass(classReferences.get(0));
+        if (this.checkDeprecated && clazz.isAnnotationPresent(Deprecated.class)) {
+            report("Deprecated class", clazz.getSimpleName(), reference);
+        }
+        return clazz;
     }
 
     private void checkMethodDef(final Class<?> ownerClass, final String memberDef, final String reference) {
@@ -220,7 +230,10 @@ public class FileChecker {
         }
         final Class<?>[] clazzesArray = clazzes.toArray(new Class<?>[clazzes.size()]);
         try {
-            ownerClass.getDeclaredMethod(methodName, clazzesArray);
+            Method method = ownerClass.getDeclaredMethod(methodName, clazzesArray);
+            if (this.checkDeprecated && method.isAnnotationPresent(Deprecated.class)) {
+                report("Deprecated method", memberDef, reference);
+            }
         } catch (NoSuchMethodException | SecurityException e) {
             report("Unknown method", memberDef, reference);
         }
@@ -228,7 +241,10 @@ public class FileChecker {
 
     private void checkFieldDef(final Class<?> primaryClass, final String memberDef, final String reference) {
         try {
-            primaryClass.getField(memberDef);
+            Field field = primaryClass.getField(memberDef);
+            if (this.checkDeprecated && field.isAnnotationPresent(Deprecated.class)) {
+                report("Deprecated field", memberDef, reference);
+            }
         } catch (NoSuchFieldException | SecurityException e) {
             report("Unknown field", memberDef, reference);
         }
