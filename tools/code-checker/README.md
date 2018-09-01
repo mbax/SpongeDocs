@@ -1,7 +1,7 @@
-Javadoc-Checker
-===============
+Code-Checker
+============
 
-A helper to search for invalid javadoc references.
+A helper to extract the code blocks from the docs for the analysis, whether the code still compiles and is up to date.
 
 Requirements
 ------------
@@ -12,9 +12,9 @@ Requirements
 Usage
 -----
 
-This application takes two optional parameters: `[path_to_SpongeDocs/sources [checkDeprecated]]`
+This application takes two optional parameters: `[path_to_SpongeDocs/sources [path_for_generated_sources]]`
 
-There a three variants to run this project.
+There a two variants to run this project.
 
 ### Direct
 
@@ -24,12 +24,12 @@ The simplest one is just run the following command in the command line:
 mvn
 ````
 
-This uses the API version as specified in the pom and assumes it is executed from within the SpongeDocs repo.
+This way assumes it is executed from within the SpongeDocs repo.
 
 You can also pass command line arguments to this like:
 
 ````bash
-mvn -Dexec.args="../../source true"
+mvn -Dexec.args="../../source target/generated-sources/codeblocks"
 ````
 
 ### Stand-alone
