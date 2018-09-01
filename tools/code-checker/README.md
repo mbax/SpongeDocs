@@ -34,18 +34,9 @@ mvn -Dexec.args="../../source target/generated-sources/codeblocks"
 
 ### Stand-alone
 
-Or you can build the jar and then run the stand-alone variant:
+Or you can build the jar and then run it:
 
 ````bash
 mvn clean package
-java -jar javadoc-checker-x.y.z-API-a.b.c.jar <args...>
-````
-
-### Independent
-
-Or use the independent version that can be used to check any API version:
-
-````bash
-mvn clean package
-java -cp "spongeapi-a.b.c-shaded.jar;javadoc-checker-x.y.z-independent.jar" org.spongepowered.docs.tools.javadoc.Main <args...>
+java -jar code-checker-x.y.z.jar <args...>
 ````
