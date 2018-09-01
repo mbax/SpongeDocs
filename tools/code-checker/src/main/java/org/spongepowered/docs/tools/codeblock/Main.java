@@ -88,6 +88,7 @@ public class Main {
         LOGGER.info("Started {} on {}", Instant.now(), processingRoot.getAbsolutePath());
 
         final AtomicInteger fileCount = new AtomicInteger();
+        final AtomicInteger codeBlockCount = new AtomicInteger();
         final AtomicInteger errorCount = new AtomicInteger();
 
         recursiveFileStream(processingRoot)
@@ -95,15 +96,15 @@ public class Main {
                 .forEachOrdered(checker -> {
                     fileCount.incrementAndGet();
                     try {
-                        checker.process();
+                        codeBlockCount.addAndGet(checker.process());
                     } catch (final Exception e) {
                         errorCount.incrementAndGet();
                         LOGGER.error("Failed to process file: {}", checker.getFileName(), e);
                     }
                 });
 
-        LOGGER.info("Completed {} - Files: {} - Errors: {}",
-                Instant.now(), fileCount, errorCount);
+        LOGGER.info("Completed {} - Files: {} - Code-Blocks: {} - Errors: {}",
+                Instant.now(), fileCount, codeBlockCount, errorCount);
         LOGGER.info("Output directory: {}", outputDirectory.getAbsolutePath());
         if (errorCount.get() > 0) {
             System.exit(1);
