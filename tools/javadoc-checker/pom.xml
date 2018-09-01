@@ -7,7 +7,6 @@
 	<artifactId>javadoc-checker</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 
-
 	<name>SpongeDocs Javadoc Checker</name>
 	<description>Checks whether the javadocs in the docs are up to date and valid</description>
 	<url>https://docs.spongepowered.org/</url>
@@ -177,6 +176,5 @@
 			</plugin>
 		</plugins>
 	</build>
-
 
 </project>
